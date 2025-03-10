@@ -169,3 +169,26 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Ignore Java & Spring Boot files
+/target/
+*.jar
+*.war
+*.class
+/logs/
+.mvn/
+.idea/
+
+# Ignore Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+.DS_Store
+
+# Ignore Node.js files (if using React frontend)
+/node_modules/
+/dist/
+
