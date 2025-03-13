@@ -4,6 +4,8 @@ import com.example.stock_market_predictor.model.Stock;
 import com.example.stock_market_predictor.repository.StockRepository;
 import com.example.stock_market_predictor.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,12 +49,20 @@ public class StockController {
     }
 
     @GetMapping("/{symbol}")
-    public Optional<Stock> getStockBySymbol(@PathVariable String symbol) {
-        return stockService.getStockBySymbol(symbol);
+    public ResponseEntity<?> getStockBySymbol(@PathVariable String symbol) {
+        Optional<Stock> stock = stockService.getStockBySymbol(symbol);
+
+        if (stock.isPresent()) {
+            return ResponseEntity.ok(stock.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error: Stock with symbol '" + symbol + "' not found.");
+        }
     }
 
+
     @GetMapping("/search")
-    public Page<Stock> searchStocks(
+    public ResponseEntity<?> searchStocks(
             @RequestParam(required = false) String sector,
             @RequestParam(required = false) String company,
             @RequestParam(defaultValue = "0") int page,
@@ -63,18 +73,43 @@ public class StockController {
         Sort.Direction direction = order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
 
+        Page<Stock> result;
+
         if (sector != null) {
-            return stockRepository.findBySectorContainingIgnoreCase(sector, pageable);
+            result = stockRepository.findBySectorContainingIgnoreCase(sector, pageable);
         } else if (company != null) {
-            return stockRepository.findByCompanyContainingIgnoreCase(company, pageable);
+            result = stockRepository.findByCompanyContainingIgnoreCase(company, pageable);
         } else {
-            return stockRepository.findAll(pageable);
+            result = stockRepository.findAll(pageable);
         }
+
+        if (result.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: No stocks found matching your search.");
+        }
+
+        return ResponseEntity.ok(result);
     }
 
 
     @PostMapping
-    public Stock addStock(@RequestBody Stock stock) {
-        return stockService.addStock(stock);
+    public ResponseEntity<?> addStock(@RequestBody Stock stock) {
+        if (stock.getSymbol() == null || stock.getSymbol().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Stock symbol cannot be empty.");
+        }
+        if (stock.getCompany() == null || stock.getCompany().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Company name cannot be empty.");
+        }
+        if (stock.getSector() == null || stock.getSector().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Sector cannot be empty.");
+        }
+
+        // Check if stock already exists
+        Optional<Stock> existingStock = stockRepository.findBySymbol(stock.getSymbol());
+        if (existingStock.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Stock with symbol '" + stock.getSymbol() + "' already exists.");
+        }
+
+        return ResponseEntity.ok(stockService.addStock(stock));
     }
+
 }
