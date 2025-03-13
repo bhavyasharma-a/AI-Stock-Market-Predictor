@@ -247,3 +247,37 @@ h2 {
 .dark-mode .pagination-btn:hover {
     background: #bd8139;
 }
+
+/* Selected Stock Info */
+.stock-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: #ffffff;
+    border-left: 5px solid #007bff;
+    display: inline-block;
+    text-align: left;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 250px;
+}
+
+.dark-mode .stock-info {
+    background: #222;
+    border-left: 5px solid #ff9800;
+    color: white;
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .stock-info h3 {
+    color: #ff9800;
+}
+
+.dark-mode .stock-info p {
+    color: #f5f5f5;
+}
+
+/* Fix selected row in dark mode */
+.dark-mode .stock-table .selected {
+    background-color: #444; /* Darker color for selected row */
+    color: white;
+}
