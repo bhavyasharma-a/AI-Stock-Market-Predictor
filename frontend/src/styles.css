@@ -7,6 +7,7 @@
     border-radius: 8px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* Title styling */
@@ -51,6 +52,21 @@ h2 {
     transition: background 0.3s ease;
 }
 
+/* View Details Button */
+.view-details-btn {
+    padding: 8px 12px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.view-details-btn:hover {
+    background: #0056b3;
+}
+
 /* Stock information box */
 .stock-info {
     margin-top: 20px;
@@ -65,6 +81,56 @@ h2 {
 .stock-info h3 {
     margin: 0 0 10px;
     color: #007bff;
+}
+
+/* Dark Mode Styling */
+.dark-mode {
+    background: #121212;
+    color: white;
+}
+
+.dark-mode .container {
+    background: #1e1e1e;
+    color: white;
+}
+
+.dark-mode .stock-table {
+    background: #2a2a2a;
+    color: white;
+}
+
+.dark-mode .stock-table th {
+    background: #444;
+}
+
+.dark-mode .stock-table tr:hover {
+    background-color: #333;
+}
+
+.dark-mode .view-details-btn {
+    background: #ff9800;
+}
+
+.dark-mode .view-details-btn:hover {
+    background: #bd8139;
+}
+
+/* Dark Mode Button */
+.toggle-dark-mode {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.toggle-dark-mode:hover {
+    background: #0056b3;
 }
 
 /* Responsive design */
