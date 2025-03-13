@@ -6,12 +6,24 @@ const StockList = () => {
     const [stocks, setStocks] = useState([]);
     const [selectedStock, setSelectedStock] = useState(null);
     const [darkMode, setDarkMode] = useState(false);
+    const [currentPage, setCurrentPage] = useState(0); // Pagination - current page
+    const [pageSize, setPageSize] = useState(10); // Number of stocks per page
+    const [sortBy, setSortBy] = useState("symbol"); // Sorting column
+    const [sortOrder, setSortOrder] = useState("asc"); // Sorting order
+    const [totalPages, setTotalPages] = useState(0); // Total number of pages
+    const [error, setError] = useState(null); // Store error messages
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/stocks")
-            .then(response => setStocks(response.data))
-            .catch(error => console.error("Error fetching stocks:", error));
-    }, []);
+        axios.get(`http://localhost:8080/api/stocks?page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&order=${sortOrder}`)
+            .then(response => {
+                setStocks(response.data.content); // Update stock list
+                setTotalPages(response.data.totalPages); // Set total pages
+            })
+            .catch(error => {
+                console.error("Error fetching stocks:", error);
+                setError("Failed to load stocks. Please try again.");
+            });
+    }, [currentPage, pageSize, sortBy, sortOrder]);
 
     const handleRowClick = (stock) => {
         setSelectedStock(stock);
@@ -62,6 +74,27 @@ const StockList = () => {
                     <p><strong>Sector:</strong> {selectedStock.sector}</p>
                 </div>
             )}
+
+            <div className="pagination">
+                <button
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 0}
+                    className="pagination-btn"
+                >
+                    ⬅ Previous
+                </button>
+
+                <span className="pagination-text"> Page {currentPage + 1} of {totalPages} </span>
+
+                <button
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage >= totalPages - 1}
+                    className="pagination-btn"
+                >
+                    Next ➡
+                </button>
+            </div>
+
         </div>
     );
 };
