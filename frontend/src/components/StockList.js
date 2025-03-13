@@ -12,6 +12,10 @@ const StockList = () => {
     const [sortOrder, setSortOrder] = useState("asc"); // Sorting order
     const [totalPages, setTotalPages] = useState(0); // Total number of pages
     const [error, setError] = useState(null); // Store error messages
+    const [editingStock, setEditingStock] = useState(null);
+    const [updatedCompany, setUpdatedCompany] = useState("");
+    const [updatedSector, setUpdatedSector] = useState("");
+
 
     useEffect(() => {
         axios.get(`http://localhost:8080/api/stocks?page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&order=${sortOrder}`)
@@ -32,6 +36,37 @@ const StockList = () => {
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
         document.body.classList.toggle("dark-mode");
+    };
+
+    const handleDelete = (symbol) => {
+        axios.delete(`http://localhost:8080/api/stocks/${symbol}`)
+            .then(() => {
+                setStocks(stocks.filter(stock => stock.symbol !== symbol));
+            })
+            .catch(error => {
+                console.error("Error deleting stock:", error);
+            });
+    };
+
+    // Handle Edit Stock
+    const handleEdit = (stock) => {
+        setEditingStock(stock);
+        setUpdatedCompany(stock.company);
+        setUpdatedSector(stock.sector);
+    };
+
+    const handleUpdate = () => {
+        axios.put(`http://localhost:8080/api/stocks/${editingStock.symbol}`, {
+            company: updatedCompany,
+            sector: updatedSector
+        }).then(response => {
+            setStocks(stocks.map(stock =>
+                stock.symbol === editingStock.symbol ? response.data : stock
+            ));
+            setEditingStock(null);
+        }).catch(error => {
+            console.error("Error updating stock:", error);
+        });
     };
 
     return (
@@ -60,11 +95,40 @@ const StockList = () => {
                             <button className="view-details-btn" onClick={() => handleRowClick(stock)}>
                                 View Details
                             </button>
+                            <button className="edit-btn" onClick={() => handleEdit(stock)}>
+                                Edit
+                            </button>
+                            <button className="delete-btn" onClick={() => handleDelete(stock.symbol)}>
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 ))}
                 </tbody>
             </table>
+
+            {/* Edit Stock Form */}
+            {editingStock && (
+                <div className="edit-stock-form">
+                    <h3>Edit Stock: {editingStock.symbol}</h3>
+                    <label>Company:
+                        <input
+                            type="text"
+                            value={updatedCompany}
+                            onChange={(e) => setUpdatedCompany(e.target.value)}
+                        />
+                    </label>
+                    <label>Sector:
+                        <input
+                            type="text"
+                            value={updatedSector}
+                            onChange={(e) => setUpdatedSector(e.target.value)}
+                        />
+                    </label>
+                    <button className="save-btn" onClick={handleUpdate}>Save</button>
+                    <button className="cancel-btn" onClick={() => setEditingStock(null)}>Cancel</button>
+                </div>
+            )}
 
             {selectedStock && (
                 <div className="stock-info">

@@ -281,3 +281,86 @@ h2 {
     background-color: #444; /* Darker color for selected row */
     color: white;
 }
+
+/* Edit & Delete Buttons */
+.edit-btn, .delete-btn {
+    padding: 6px 12px;
+    margin-left: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.edit-btn {
+    background: #ffa500;
+    color: white;
+}
+
+.edit-btn:hover {
+    background: #cc8400;
+}
+
+.delete-btn {
+    background: #ff4d4d;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #cc0000;
+}
+
+/* Edit Stock Form */
+.edit-stock-form {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    max-width: 400px;
+}
+
+.edit-stock-form h3 {
+    margin-bottom: 10px;
+}
+
+.edit-stock-form label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.edit-stock-form input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.save-btn {
+    background: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.save-btn:hover {
+    background: #0056b3;
+}
+
+.cancel-btn {
+    background: #6c757d;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.cancel-btn:hover {
+    background: #545b62;
+}
