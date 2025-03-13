@@ -124,7 +124,7 @@ public class StockController {
                     .body("Error: Stock '" + symbol + "' not found.");
         }
     }
-    
+
     @PutMapping("/{symbol}")
     public ResponseEntity<?> updateStock(@PathVariable String symbol, @RequestBody Stock updatedStock) {
         Optional<Stock> stockOptional = stockService.getStockBySymbol(symbol);
