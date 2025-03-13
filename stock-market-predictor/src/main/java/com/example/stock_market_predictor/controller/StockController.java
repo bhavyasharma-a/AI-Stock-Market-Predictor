@@ -112,4 +112,33 @@ public class StockController {
         return ResponseEntity.ok(stockService.addStock(stock));
     }
 
+    @DeleteMapping("/{symbol}")
+    public ResponseEntity<?> deleteStock(@PathVariable String symbol) {
+        Optional<Stock> stock = stockService.getStockBySymbol(symbol);
+
+        if (stock.isPresent()) {
+            stockRepository.delete(stock.get());
+            return ResponseEntity.ok("Stock '" + symbol + "' deleted.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error: Stock '" + symbol + "' not found.");
+        }
+    }
+    
+    @PutMapping("/{symbol}")
+    public ResponseEntity<?> updateStock(@PathVariable String symbol, @RequestBody Stock updatedStock) {
+        Optional<Stock> stockOptional = stockService.getStockBySymbol(symbol);
+
+        if (stockOptional.isPresent()) {
+            Stock stock = stockOptional.get();
+            stock.setCompany(updatedStock.getCompany());
+            stock.setSector(updatedStock.getSector());
+            stockRepository.save(stock);
+            return ResponseEntity.ok(stock);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error: Stock with symbol '" + symbol + "' not found.");
+        }
+    }
+
 }
