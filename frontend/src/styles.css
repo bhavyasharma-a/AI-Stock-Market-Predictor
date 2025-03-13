@@ -206,3 +206,44 @@ h2 {
         padding: 10px;
     }
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination-text {
+    margin: 0 15px;
+    font-size: 16px;
+}
+
+.pagination-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.pagination-btn:hover {
+    background: #0056b3;
+}
+
+.pagination-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Dark mode styling */
+.dark-mode .pagination-btn {
+    background: #ff9800;
+}
+
+.dark-mode .pagination-btn:hover {
+    background: #bd8139;
+}
