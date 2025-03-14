@@ -108,7 +108,7 @@ const StockList = () => {
             </table>
 
 
-            
+
             {/* Edit Stock Form */}
             {editingStock && (
                 <div className="edit-stock-form">

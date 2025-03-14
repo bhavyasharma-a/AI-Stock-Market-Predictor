@@ -1,4 +1,4 @@
-# AI-Stock-Market-Predictor
+# StockSage
 
 AI-Based Stock Market Predictor
 
