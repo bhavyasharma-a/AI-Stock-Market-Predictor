@@ -141,8 +141,8 @@ if __name__ == "__main__":
         print("Successfully fetched data from yahoo finance")
         print(df.head()) 
 
-        #print("\nTraining **Linear Regression Model**...")
-        #linearModel = trainLinear(df)
+        print("\nTraining **Linear Regression Model**...")
+        linearModel = trainLinear(df)
 
         print("\nTraining **LSTM Model**...")
         lstmModel = trainLSTM(df, price_scaler)
