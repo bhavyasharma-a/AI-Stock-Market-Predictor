@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
-import "../styles.css"; // Ensure the styles are correctly linked
+import "../styles.css"; // Ensure styles are correctly linked
 
 const StockList = () => {
     const [stocks, setStocks] = useState([]);
     const [selectedStock, setSelectedStock] = useState(null);
     const [darkMode, setDarkMode] = useState(false);
-    const [currentPage, setCurrentPage] = useState(0); // Pagination - current page
-    const [pageSize, setPageSize] = useState(10); // Number of stocks per page
-    const [sortBy, setSortBy] = useState("symbol"); // Sorting column
-    const [sortOrder, setSortOrder] = useState("asc"); // Sorting order
-    const [totalPages, setTotalPages] = useState(0); // Total number of pages
-    const [error, setError] = useState(null); // Store error messages
+    const [currentPage, setCurrentPage] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
+    const [sortBy, setSortBy] = useState("symbol");
+    const [sortOrder, setSortOrder] = useState("asc");
+    const [totalPages, setTotalPages] = useState(0);
+    const [error, setError] = useState(null);
     const [editingStock, setEditingStock] = useState(null);
     const [updatedCompany, setUpdatedCompany] = useState("");
     const [updatedSector, setUpdatedSector] = useState("");
 
-
     useEffect(() => {
         axios.get(`http://localhost:8080/api/stocks?page=${currentPage}&size=${pageSize}&sortBy=${sortBy}&order=${sortOrder}`)
             .then(response => {
-                setStocks(response.data.content); // Update stock list
-                setTotalPages(response.data.totalPages); // Set total pages
+                setStocks(response.data.content);
+                setTotalPages(response.data.totalPages);
             })
             .catch(error => {
                 console.error("Error fetching stocks:", error);
@@ -48,7 +48,6 @@ const StockList = () => {
             });
     };
 
-    // Handle Edit Stock
     const handleEdit = (stock) => {
         setEditingStock(stock);
         setUpdatedCompany(stock.company);
@@ -71,9 +70,10 @@ const StockList = () => {
 
     return (
         <div className={`container ${darkMode ? "dark" : ""}`}>
-            <button className="toggle-dark-mode" onClick={toggleDarkMode}>
-                {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-            </button>
+            {/*  Breadcrumb Navigation */}
+            <nav className="breadcrumb">
+                <Link to="/">Home</Link> / <span>Stock List</span>
+            </nav>
 
             <h2>Stock Market Data</h2>
             <table className="stock-table">
@@ -93,7 +93,7 @@ const StockList = () => {
                         <td>{stock.sector}</td>
                         <td>
                             <button className="view-details-btn" onClick={() => handleRowClick(stock)}>
-                                View Details
+                                View
                             </button>
                             <button className="edit-btn" onClick={() => handleEdit(stock)}>
                                 Edit
@@ -107,28 +107,28 @@ const StockList = () => {
                 </tbody>
             </table>
 
-
-
-            {/* Edit Stock Form */}
+            {/* Edit Stock (Popup Modal) */}
             {editingStock && (
-                <div className="edit-stock-form">
-                    <h3>Edit Stock: {editingStock.symbol}</h3>
-                    <label>Company:
-                        <input
-                            type="text"
-                            value={updatedCompany}
-                            onChange={(e) => setUpdatedCompany(e.target.value)}
-                        />
-                    </label>
-                    <label>Sector:
-                        <input
-                            type="text"
-                            value={updatedSector}
-                            onChange={(e) => setUpdatedSector(e.target.value)}
-                        />
-                    </label>
-                    <button className="save-btn" onClick={handleUpdate}>Save</button>
-                    <button className="cancel-btn" onClick={() => setEditingStock(null)}>Cancel</button>
+                <div className="modal">
+                    <div className="modal-content">
+                        <h3>Edit Stock: {editingStock.symbol}</h3>
+                        <label>Company:
+                            <input
+                                type="text"
+                                value={updatedCompany}
+                                onChange={(e) => setUpdatedCompany(e.target.value)}
+                            />
+                        </label>
+                        <label>Sector:
+                            <input
+                                type="text"
+                                value={updatedSector}
+                                onChange={(e) => setUpdatedSector(e.target.value)}
+                            />
+                        </label>
+                        <button className="save-btn" onClick={handleUpdate}>Save</button>
+                        <button className="cancel-btn" onClick={() => setEditingStock(null)}>Cancel</button>
+                    </div>
                 </div>
             )}
 
@@ -141,6 +141,7 @@ const StockList = () => {
                 </div>
             )}
 
+            {/* Pagination */}
             <div className="pagination">
                 <button
                     onClick={() => setCurrentPage(currentPage - 1)}
@@ -160,7 +161,6 @@ const StockList = () => {
                     Next ➡
                 </button>
             </div>
-
         </div>
     );
 };
