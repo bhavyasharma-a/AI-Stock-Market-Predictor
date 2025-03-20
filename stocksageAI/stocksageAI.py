@@ -2,71 +2,45 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 
 def fetchYahooData(symbol, start_date="2023-01-01", end_date="2024-03-01"):
-    print(f"Fetching stock data for {symbol} from Yahoo Finance")
+    print(f"Fetching stock data for {symbol} from Yahoo Finance (Prices in USD)")
     stock_data = yf.download(symbol, start=start_date, end=end_date)
 
     if stock_data.empty:
         print("No data fetched! Check stock symbol or date range.")
         return None, None, None
 
-    print("Data successfully fetched!")
-    
+    print("Data successfully fetched in USD!")
+
     stock_data = stock_data[['Close', 'Volume']].reset_index()
     stock_data.rename(columns={'Close': 'close_price', 'Date': 'date', 'Volume': 'volume'}, inplace=True)
 
-    stock_data['date'] = pd.to_datetime(stock_data['date'])
-    stock_data['days_since_start'] = (stock_data['date'] - stock_data['date'].min()).dt.days
+    # Convert date format to "01 Jan 24"
+    stock_data['date'] = pd.to_datetime(stock_data['date']).dt.strftime("%d %b %y")
+
+    stock_data['days_since_start'] = (pd.to_datetime(stock_data['date'], format="%d %b %y") - 
+                                      pd.to_datetime(stock_data['date'].min(), format="%d %b %y")).dt.days
 
     stock_data['SMA_10'] = stock_data['close_price'].rolling(window=10).mean()
     stock_data['SMA_30'] = stock_data['close_price'].rolling(window=30).mean()
 
     stock_data.dropna(inplace=True)
 
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    stock_data[['close_price', 'volume', 'SMA_10', 'SMA_30']] = scaler.fit_transform(
-    stock_data[['close_price', 'volume', 'SMA_10', 'SMA_30']]
-    )
-
+    # Scaling features (except for price, to preserve USD values)
     feature_scaler = MinMaxScaler(feature_range=(0, 1))
-    stock_data[['close_price', 'volume', 'SMA_10', 'SMA_30']] = feature_scaler.fit_transform(
-        stock_data[['close_price', 'volume', 'SMA_10', 'SMA_30']]
+    stock_data[['volume', 'SMA_10', 'SMA_30']] = feature_scaler.fit_transform(
+        stock_data[['volume', 'SMA_10', 'SMA_30']]
     )
 
+    # Scaling prices separately
     price_scaler = MinMaxScaler(feature_range=(0, 1))
     stock_data[['close_price']] = price_scaler.fit_transform(stock_data[['close_price']])
 
-    return stock_data, scaler, feature_scaler, price_scaler
-
-def trainLinear(df):
-    print("Linear Model training")
-
-    X = df[['days_since_start']]
-    y = df ['normalised_price']
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
-
-    model = LinearRegression()
-    model.fit(X_train, y_train)
-
-    y_pred = model.predict(X_test)
-
-    plt.figure(figsize=(10,5))
-    plt.plot(df['date'], df['normalised_price'], label="Actual Prices", color='blue')
-    plt.plot(df['date'].iloc[len(X_train):], y_pred, label="Predicted Prices", color='red', linestyle='dashed')
-    plt.xlabel("Date")
-    plt.ylabel("Stock Price (Normalised)")
-    plt.title("Stock Price Prediction using Linear Regression")
-    plt.legend()
-    plt.show()
-
-    return model
+    return stock_data, feature_scaler, price_scaler
 
 def prepareLSTMData(df, sequence_length=50):
     features = ['close_price', 'volume', 'SMA_10', 'SMA_30']
@@ -94,9 +68,9 @@ def buildLSTMModel(input_shape):
     model.compile(optimizer='adam', loss='mean_squared_error')
     return model
 
-def trainLSTM(df, scaler):
+def trainLSTM(df, price_scaler):
     sequence_length = 50
-    X, y = prepareLSTMData (df, sequence_length)
+    X, y = prepareLSTMData(df, sequence_length)
 
     split_index = int(0.8 * len(X))
     X_train, X_test = X[:split_index], X[split_index:]
@@ -114,6 +88,7 @@ def trainLSTM(df, scaler):
     y_test = y_test.reshape(-1, 1)
     predictions = predictions.reshape(-1, 1)
 
+    # Convert predictions & actual prices back to USD
     y_test = price_scaler.inverse_transform(y_test) 
     predictions = price_scaler.inverse_transform(predictions)
 
@@ -122,11 +97,13 @@ def trainLSTM(df, scaler):
     print(f"Number of test dates: {len(test_dates)}")
     print(f"Number of predictions: {len(predictions)}")
 
+    # Plot actual vs predicted prices (in USD)
     plt.figure(figsize=(10, 5))
-    plt.plot(df['date'].iloc[split_index + sequence_length:], scaler.inverse_transform(y_test.reshape(-1, 1)), label="Actual Prices", color='blue')
-    plt.plot(df['date'].iloc[split_index + sequence_length:], predictions, label="Predicted Prices (LSTM)", color='red', linestyle='dashed')
+    plt.plot(test_dates, y_test, label="Actual Prices (USD)", color='blue')
+    plt.plot(test_dates, predictions, label="Predicted Prices (USD)", color='red', linestyle='dashed')
     plt.xlabel("Date")
-    plt.ylabel("Stock Price")
+    plt.ylabel("Stock Price (USD)")
+    plt.xticks(rotation=45)  # Rotate date labels for better visibility
     plt.title("Stock Price Prediction using LSTM")
     plt.legend()
     plt.show()
@@ -135,14 +112,11 @@ def trainLSTM(df, scaler):
 
 if __name__ == "__main__":
     symbol = "AAPL"
-    df, scaler, feature_scaler, price_scaler = fetchYahooData(symbol)
+    df, feature_scaler, price_scaler = fetchYahooData(symbol)
     
     if df is not None:
-        print("Successfully fetched data from yahoo finance")
+        print("Successfully fetched data from Yahoo Finance (in USD)")
         print(df.head()) 
-
-        print("\nTraining **Linear Regression Model**...")
-        linearModel = trainLinear(df)
 
         print("\nTraining **LSTM Model**...")
         lstmModel = trainLSTM(df, price_scaler)
