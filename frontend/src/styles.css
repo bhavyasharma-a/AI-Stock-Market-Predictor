@@ -32,7 +32,7 @@ h2 {
 
 /* Dark mode title color */
 .dark-mode h2 {
-    color: #ff9800;
+    color: #fafafa;
 }
 
 /* Table styling */
@@ -53,7 +53,7 @@ h2 {
 
 /* Table headers */
 .stock-table th {
-    background: #007bff;
+    background: #060b0a;
     color: white;
     font-weight: bold;
 }
@@ -102,7 +102,7 @@ h2 {
 .view-details-btn {
     padding: 8px 12px;
     border: none;
-    background: #007bff;
+    background: #41a6ea;
     color: white;
     border-radius: 5px;
     cursor: pointer;
@@ -115,11 +115,11 @@ h2 {
 
 /* Dark mode for buttons */
 .dark-mode .view-details-btn {
-    background: #ff9800;
+    background: #0080ff;
 }
 
 .dark-mode .view-details-btn:hover {
-    background: #bd8139;
+    background: #0275ea;
 }
 
 /* Stock information box */
@@ -293,7 +293,7 @@ h2 {
 }
 
 .edit-btn {
-    background: #ffa500;
+    background: #ea8b3d;
     color: white;
 }
 
@@ -302,12 +302,12 @@ h2 {
 }
 
 .delete-btn {
-    background: #ff4d4d;
+    background: #01b54e;
     color: white;
 }
 
 .delete-btn:hover {
-    background: #cc0000;
+    background: #00cc9c;
 }
 
 /* Edit Stock Form */

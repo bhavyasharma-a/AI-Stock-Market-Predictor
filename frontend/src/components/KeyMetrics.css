@@ -1,0 +1,40 @@
+/* Key Metrics Styling */
+.metrics-container {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.metrics-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.metric-card {
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.metric-description {
+    font-size: 0.9rem;
+    color: #666;
+}

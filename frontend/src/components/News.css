@@ -1,0 +1,31 @@
+.latest-news {
+    background-color: #f9f9f9; /* Light background */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.latest-news h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.latest-news ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.latest-news li {
+    margin-bottom: 10px;
+}
+
+.latest-news a {
+    color: #1e88e5;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.latest-news a:hover {
+    text-decoration: underline;
+}
