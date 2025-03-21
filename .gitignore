@@ -192,3 +192,4 @@ env/
 /node_modules/
 /dist/
 
+stocksageAI/lstm_model.h5
