@@ -84,6 +84,8 @@ def trainLSTM(df, price_scaler):
 
     model.fit(X_train, y_train, epochs=100, batch_size=16, verbose=1)
 
+    model.save("lstm_model.h5")
+
     predictions = model.predict(X_test)
     y_test = y_test.reshape(-1, 1)
     predictions = predictions.reshape(-1, 1)
